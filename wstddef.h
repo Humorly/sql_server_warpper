@@ -1,1 +1,15 @@
-#pragma once#pragma once#ifndef __H_WSTD_DEFINE_H__#define __H_WSTD_DEFINE_H__#include <cstdint>#ifndef	obyte			#define	obyte				char#endif#ifndef integer_type#define integer_type 		int64_t#endif#endif // !__H_WSTD_DEFINE_H__
+#pragma once
+#pragma once
+#ifndef __H_WSTD_DEFINE_H__
+#define __H_WSTD_DEFINE_H__
+
+#include <cstdint>
+#ifndef	obyte			
+#define	obyte				char
+#endif
+
+#ifndef integer_type
+#define integer_type 		int64_t
+#endif
+ 
+#endif // !__H_WSTD_DEFINE_H__
