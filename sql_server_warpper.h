@@ -1,1 +1,133 @@
-#pragma once#include "sql_server_warpper_impl.h"#import "msado15.dll" no_namespace rename("EOF", "adoEOF")class sql_server_warpper : public sql_server_warpper_ipml{public:	sql_server_warpper(std::wstring path, std::wstring user, std::wstring password) 	{		get_sql_content().open(path, user, password);	}	virtual ~sql_server_warpper() {}	// Ôö¼Ó	bool insert(const std::wstring& command)	{		auto record_ = get_sql_content().execute(command);		// Ã»ÓĞÄÚÈİ		if (record_->adoEOF) return false;		return true;	}	// É¾³ı	bool remove(const std::wstring& command)	{		auto record_ = get_sql_content().execute(command);		// Ã»ÓĞÄÚÈİ		if (record_->adoEOF) return false;		return true;	}	// ĞŞ¸Ä	bool update(const std::wstring& command)	{		auto record_ = get_sql_content().execute(command);		// Ã»ÓĞÄÚÈİ		if (record_->adoEOF) return false;		return true;	}	// ²éÑ¯	template <typename __set, typename __type, typename ... params>	bool select(const std::wstring& command, std::vector<std::tuple<__type, params...>>& dest, __set parm)	{		auto record_ = get_sql_content().execute(command);		// Ã»ÓĞÄÚÈİ		if (record_->adoEOF) return false;		// ¶ÁÈ¡ÄÚÈİ		while (!record_->adoEOF)			separation<std::tuple<__type, params...>, _RecordsetPtr, __set, __type, params...>(dest, record_, parm);		return true;	}private:	struct sql_content	{	public:		sql_content()		{			// ³õÊ¼ÊµÀı			init_com_instance();		}		virtual ~sql_content() { close(); }		// Á¬½ÓÊı¾İ¿â		int open(std::wstring path, std::wstring user, std::wstring password)		{			auto ret_ = cn_->Open(path.c_str(), user.c_str(), password.c_str(), adConnectUnspecified);			return ret_;		}		// Ö´ĞĞÓï¾ä		_RecordsetPtr & execute(std::wstring command)		{			// ÏÈÒÆ³ıÖ®			if (nullptr != rs_)			{				rs_->Close();				rs_ = nullptr;			}			rs_ = cn_->Execute(command.c_str(), NULL, adCmdText);			return rs_;		}	private:		bool init_ = false;		_ConnectionPtr cn_ = nullptr;		_RecordsetPtr rs_ = nullptr;		// ³õÊ¼ÊµÀı		void init_com_instance()		{			// Æô¶¯±êÊ¶			if (!init_)			{				CoInitialize(NULL);				cn_ = _ConnectionPtr("ADODB.Connection");				init_ = true;			}		}		void close()		{			if (init_)			{				// É¾³ı½á¹û				if (nullptr != rs_) rs_->Close();				// ÒÆ³ıÁ¬½Ó				if (nullptr != cn_) cn_->Close();				cn_ = nullptr;				rs_ = nullptr;				CoUninitialize();			}		}	};	sql_content& get_sql_content()	{		// ½Ó¿Ú¶ÔÏó		static sql_content content_;		return content_;	}};
+#pragma once
+
+#include "sql_server_warpper_impl.h"
+#import "msado15.dll" no_namespace rename("EOF", "adoEOF")
+
+class sql_server_warpper : public sql_server_warpper_ipml
+{
+public:
+	sql_server_warpper(std::wstring path, std::wstring user, std::wstring password) 
+	{
+		get_sql_content().open(path, user, password);
+	}
+	virtual ~sql_server_warpper() {}
+
+	// å¢åŠ 
+	bool insert(const std::wstring& command)
+	{
+		auto record_ = get_sql_content().execute(command);
+		// æ²¡æœ‰å†…å®¹
+		if (record_->adoEOF) return false;
+
+		return true;
+	}
+
+	// åˆ é™¤
+	bool remove(const std::wstring& command)
+	{
+		auto record_ = get_sql_content().execute(command);
+		// æ²¡æœ‰å†…å®¹
+		if (record_->adoEOF) return false;
+
+		return true;
+	}
+
+	// ä¿®æ”¹
+	bool update(const std::wstring& command)
+	{
+		auto record_ = get_sql_content().execute(command);
+		// æ²¡æœ‰å†…å®¹
+		if (record_->adoEOF) return false;
+
+		return true;
+	}
+
+	// æŸ¥è¯¢
+	template <typename __set, typename __type, typename ... params>
+	bool select(const std::wstring& command, std::vector<std::tuple<__type, params...>>& dest, __set parm)
+	{
+		auto record_ = get_sql_content().execute(command);
+
+		// æ²¡æœ‰å†…å®¹
+		if (record_->adoEOF) return false;
+
+		// è¯»å–å†…å®¹
+		while (!record_->adoEOF)
+			separation<std::tuple<__type, params...>, _RecordsetPtr, __set, __type, params...>(dest, record_, parm);
+
+		return true;
+	}
+
+private:
+	struct sql_content
+	{
+	public:
+		sql_content()
+		{
+			// åˆå§‹å®ä¾‹
+			init_com_instance();
+		}
+
+		virtual ~sql_content() { close(); }
+
+		// è¿æ¥æ•°æ®åº“
+		int open(std::wstring path, std::wstring user, std::wstring password)
+		{
+			auto ret_ = cn_->Open(path.c_str(), user.c_str(), password.c_str(), adConnectUnspecified);
+			return ret_;
+		}
+
+		// æ‰§è¡Œè¯­å¥
+		_RecordsetPtr & execute(std::wstring command)
+		{
+			// å…ˆç§»é™¤ä¹‹
+			if (nullptr != rs_)
+			{
+				rs_->Close();
+				rs_ = nullptr;
+			}
+
+			rs_ = cn_->Execute(command.c_str(), NULL, adCmdText);
+			return rs_;
+		}
+
+	private:
+		bool init_ = false;
+		_ConnectionPtr cn_ = nullptr;
+		_RecordsetPtr rs_ = nullptr;
+
+		// åˆå§‹å®ä¾‹
+		void init_com_instance()
+		{
+			// å¯åŠ¨æ ‡è¯†
+			if (!init_)
+			{
+				CoInitialize(NULL);
+				cn_ = _ConnectionPtr("ADODB.Connection");
+				init_ = true;
+			}
+		}
+
+		void close()
+		{
+			if (init_)
+			{
+				// åˆ é™¤ç»“æœ
+				if (nullptr != rs_) rs_->Close();
+				// ç§»é™¤è¿æ¥
+				if (nullptr != cn_) cn_->Close();
+
+				cn_ = nullptr;
+				rs_ = nullptr;
+				CoUninitialize();
+			}
+		}
+	};
+
+	sql_content& get_sql_content()
+	{
+		// æ¥å£å¯¹è±¡
+		static sql_content content_;
+		return content_;
+	}
+}; 
