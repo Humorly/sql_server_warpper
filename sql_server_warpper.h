@@ -87,8 +87,17 @@ private:
 		// 连接数据库
 		int open(std::wstring path, std::wstring user, std::wstring password)
 		{
-			auto ret_ = cn_->Open(path.c_str(), user.c_str(), password.c_str(), adConnectUnspecified);
-			return ret_;
+			try
+			{
+				auto ret_ = cn_->Open(path.c_str(), user.c_str(), password.c_str(), adConnectUnspecified);
+				return ret_;
+			}
+			catch (_com_error & e)
+			{
+				std::wcout << "sql error is --> " << e.Description() << "\n";
+				return 0;
+			}
+			return 0;
 		}
 
 		// 执行语句
