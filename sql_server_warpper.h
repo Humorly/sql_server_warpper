@@ -15,38 +15,36 @@ public:
 	// 增加
 	bool insert(const std::wstring& command)
 	{
-		auto record_ = get_sql_content().execute(command);
-		// 没有内容
-		if (record_->adoEOF) return false;
-
-		return true;
+		return invoke(command);
 	}
 
 	// 删除
 	bool remove(const std::wstring& command)
 	{
-		auto record_ = get_sql_content().execute(command);
-		// 没有内容
-		if (record_->adoEOF) return false;
-
-		return true;
+		return invoke(command);
 	}
 
 	// 修改
 	bool update(const std::wstring& command)
 	{
-		auto record_ = get_sql_content().execute(command);
-		// 没有内容
-		if (record_->adoEOF) return false;
-
-		return true;
+		return invoke(command);
 	}
 
 	// 查询
 	template <typename __set, typename __type, typename ... params>
 	bool select(const std::wstring& command, std::vector<std::tuple<__type, params...>>& dest, __set parm)
 	{
-		auto record_ = get_sql_content().execute(command);
+		_RecordsetPtr record_;
+
+		try
+		{
+			record_ = get_sql_content().execute(command);
+		}
+		catch (_com_error & e)
+		{
+			std::wcout << "sql error is --> " << e.Description() << "\n";
+			return false;
+		}
 
 		// 没有内容
 		if (record_->adoEOF) return false;
@@ -59,6 +57,22 @@ public:
 	}
 
 private:
+	// 执行过程
+	bool invoke(const std::wstring& command)
+	{
+		try
+		{
+			auto& record_ = get_sql_content().execute(command);
+		}
+		catch (_com_error & e)
+		{
+			std::wcout << "sql error is --> " << e.Description() << "\n";
+			return false;
+		}
+
+		return true;
+	}
+
 	struct sql_content
 	{
 	public:
@@ -130,4 +144,4 @@ private:
 		static sql_content content_;
 		return content_;
 	}
-}; 
+};
