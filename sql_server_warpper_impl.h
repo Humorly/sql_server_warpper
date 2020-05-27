@@ -74,11 +74,11 @@ protected:
 
 	// varchar
 	template<typename __dest_type, typename __parm>
-	struct get_value_type<std::string, __dest_type, __parm>
+	struct get_value_type<std::wstring, __dest_type, __parm>
 	{
-		inline static std::string get_value(__dest_type val, __parm parm)
+		inline static std::wstring get_value(__dest_type val, __parm parm)
 		{
-			return (char *)(_bstr_t)(val->GetCollect(parm));
+			return (wchar_t *)(_bstr_t)((val->GetCollect(parm)));
 		}
 	};
 
