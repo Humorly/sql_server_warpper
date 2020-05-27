@@ -52,6 +52,9 @@ public:
 		while (!record_->adoEOF)
 			separation<std::tuple<__type, params...>, _RecordsetPtr, __set, __type, params...>(dest, record_, parm);
 
+		record_->Close();
+		record_ = nullptr;
+
 		return true;
 	}
 
@@ -102,13 +105,6 @@ private:
 		// 执行语句
 		_RecordsetPtr & execute(std::wstring command)
 		{
-			// 先移除之
-			if (nullptr != rs_)
-			{
-				rs_->Close();
-				rs_ = nullptr;
-			}
-
 			rs_ = cn_->Execute(command.c_str(), NULL, adCmdText);
 			return rs_;
 		}
@@ -134,8 +130,6 @@ private:
 		{
 			if (init_)
 			{
-				// 删除结果
-				if (nullptr != rs_) rs_->Close();
 				// 移除连接
 				if (nullptr != cn_) cn_->Close();
 
