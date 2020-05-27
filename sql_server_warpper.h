@@ -1,7 +1,6 @@
 #pragma once
 
 #include "sql_server_warpper_impl.h"
-#import "msado15.dll" no_namespace rename("EOF", "adoEOF")
 
 class sql_server_warpper : public sql_server_warpper_ipml
 {
@@ -56,7 +55,6 @@ public:
 		return true;
 	}
 
-private:
 	// 执行过程
 	bool invoke(const std::wstring& command)
 	{
@@ -73,6 +71,7 @@ private:
 		return true;
 	}
 
+private:
 	struct sql_content
 	{
 	public:
