@@ -7,7 +7,7 @@ class sql_server_warpper : public sql_server_warpper_ipml
 public:
 	sql_server_warpper(std::wstring path, std::wstring user, std::wstring password) 
 	{
-		get_sql_content().open(path, user, password);
+		content_.open(path, user, password);
 	}
 	virtual ~sql_server_warpper() {}
 
@@ -37,7 +37,7 @@ public:
 
 		try
 		{
-			record_ = get_sql_content().execute(command);
+			record_ = content_.execute(command);
 		}
 		catch (_com_error & e)
 		{
@@ -63,7 +63,7 @@ public:
 	{
 		try
 		{
-			auto& record_ = get_sql_content().execute(command);
+			auto& record_ = content_.execute(command);
 		}
 		catch (_com_error & e)
 		{
@@ -140,10 +140,6 @@ private:
 		}
 	};
 
-	sql_content& get_sql_content()
-	{
-		// 接口对象
-		static sql_content content_;
-		return content_;
-	}
+	// sql连接对象
+	sql_content content_;
 };
