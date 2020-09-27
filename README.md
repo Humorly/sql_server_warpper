@@ -1,5 +1,5 @@
 # sql_server_warpper
-Windows下用ado以更加modern c++的方式访问sql server
+Windows下用ado以更加modern c++的方式访问sql server，执行增删改查。
 
 测试代码:
 
